@@ -1,0 +1,98 @@
+{
+    "estudiantes": [
+        {
+            "id": 1,
+            "nombre": "Karina López",
+            "tarea": "Avance de Prototipo MVP",
+            "autorreflexion": "¿Cómo garantizamos que la solución sea de costo cero sin requerir licencias de pago?",
+            "feedbackDocente": "Excelente estructuración del prototipo. Te sugiero reforzar el criterio de visualización de la rúbrica.",
+            "evaluacion": {
+                "criterio1": 2,
+                "criterio2": 1,
+                "criterio3": 2
+            }
+        },
+        {
+            "id": 2,
+            "nombre": "Djanna De La Cruz",
+            "tarea": "Matriz de consistencia",
+            "autorreflexion": "Tuve dudas en aislar la necesidad sin caer en la solución disfrazada.",
+            "feedbackDocente": "",
+            "evaluacion": {
+                "criterio1": 0,
+                "criterio2": 0,
+                "criterio3": 0
+            }
+        }
+    ],
+    "rubrica": [
+        {
+            "id": "criterio1",
+            "titulo": "1. Diagnóstico de Necesidad (Problem Statement)",
+            "opciones": [
+                {
+                    "pts": 0,
+                    "label": "Insuficiente (0 pts)"
+                },
+                {
+                    "pts": 1,
+                    "label": "En Proceso (1 pt)"
+                },
+                {
+                    "pts": 2,
+                    "label": "Logrado (2 pts)"
+                }
+            ]
+        },
+        {
+            "id": "criterio2",
+            "titulo": "2. Criterio de Calidad Visible (Rúbrica)",
+            "opciones": [
+                {
+                    "pts": 0,
+                    "label": "Insuficiente (0 pts)"
+                },
+                {
+                    "pts": 1,
+                    "label": "En Proceso (1 pt)"
+                },
+                {
+                    "pts": 2,
+                    "label": "Logrado (2 pts)"
+                }
+            ]
+        },
+        {
+            "id": "criterio3",
+            "titulo": "3. Demostrabilidad del MVP (5 pasos)",
+            "opciones": [
+                {
+                    "pts": 0,
+                    "label": "Insuficiente (0 pts)"
+                },
+                {
+                    "pts": 1,
+                    "label": "En Proceso (1 pt)"
+                },
+                {
+                    "pts": 2,
+                    "label": "Logrado (2 pts)"
+                }
+            ]
+        }
+    ],
+    "bancoRespuestas": [
+        {
+            "categoria": "Excelente",
+            "texto": "✅ ¡Excelente trabajo! Cumples rigurosamente con los 5 pasos del prototipo demostrable."
+        },
+        {
+            "categoria": "Refuerzo",
+            "texto": "⚠️ Buen avance. Recuerda no incluir una solución disfrazada en la Problem Card."
+        },
+        {
+            "categoria": "Autorreflexión",
+            "texto": "💭 Revisa la pregunta de autorreflexión para alinear tu propuesta a la guía metodológica."
+        }
+    ]
+}

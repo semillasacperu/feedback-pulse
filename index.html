@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeedBack Pulse - Ecosistema de Retroalimentación Activa</title>
+    <style>
+        /* ==================== ESTILOS BASE Y VARIABLES ==================== */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ==================== ENCABEZADO ==================== */
+        .main-header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .logo-container h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .logo-container h1 span {
+            color: var(--accent-cyan);
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .role-selector-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--bg-dark);
+            padding: 0.4rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .role-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding-left: 0.5rem;
+        }
+
+        .role-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .role-btn.active {
+            background-color: var(--accent-blue);
+            color: var(--text-main);
+        }
+
+        /* ==================== CONTENEDOR PRINCIPAL ==================== */
+        .app-container {
+            padding: 1.5rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .view-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-must {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .badge-should {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+        }
+
+        /* ==================== GRIDS Y CARDS ==================== */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            gap: 1.5rem;
+        }
+
+        .student-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+
+            .grid-layout,
+            .student-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* ==================== ESTUDIANTES Y RÚBRICA ==================== */
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .student-item {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .student-item:hover,
+        .student-item.active {
+            border-color: var(--accent-blue);
+            background-color: var(--bg-card-hover);
+        }
+
+        .student-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .student-task {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .self-reflection-box {
+            background-color: rgba(6, 182, 212, 0.1);
+            border: 1px dashed var(--accent-cyan);
+            padding: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .self-reflection-box h4 {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.4rem;
+        }
+
+        .italic-text {
+            font-size: 0.85rem;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .rubric-criterion {
+            margin-bottom: 1rem;
+        }
+
+        .criterion-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .rubric-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .rubric-btn {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .rubric-btn:hover,
+        .rubric-btn.selected {
+            background-color: var(--accent-blue);
+            color: var(--text-main);
+            border-color: var(--accent-blue);
+        }
+
+        .bank-buttons-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .bank-btn {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bank-btn:hover {
+            border-color: var(--accent-cyan);
+            background-color: var(--bg-card-hover);
+        }
+
+        /* ==================== VIDEO Y BOTONES ==================== */
+        .video-preview-box {
+            background-color: var(--bg-dark);
+            border-radius: 10px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-placeholder {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .rec-dot {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .avatar-circle {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        textarea {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.85rem;
+            min-height: 90px;
+            width: 100%;
+            resize: vertical;
+        }
+
+        .btn {
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: var(--text-main);
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ==================== DASHBOARD ESTUDIANTE ==================== */
+        .student-dashboard-chart {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .chart-label {
+            width: 85px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .chart-bar-track {
+            flex: 1;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            background-color: var(--accent-blue);
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
+        .chart-bar-fill.active-bar {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .chart-value {
+            width: 60px;
+            text-align: right;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .video-player-box {
+            background-color: var(--bg-dark);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .player-screen {
+            aspect-ratio: 16 / 9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            gap: 0.5rem;
+        }
+
+        .play-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .player-controls {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 65%;
+            height: 100%;
+            background-color: var(--accent-cyan);
+        }
+
+        .feedback-message-card {
+            background-color: var(--bg-dark);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="logo-container">
+            <div class="logo-icon">⚡</div>
+            <div>
+                <h1>FeedBack <span>Pulse</span></h1>
+                <p class="subtitle">CISE • Universidad Científica del Sur & SISE</p>
+            </div>
+        </div>
+        <div class="role-selector-container">
+            <span class="role-label">Vista actual:</span>
+            <button id="btn-docente-view" class="role-btn active">👨‍🏫 Docente (Evaluador)</button>
+            <button id="btn-estudiante-view" class="role-btn">👨‍🎓 Estudiante (Receptor)</button>
+        </div>
+    </header>
+
+    <main class="app-container">
+
+        <!-- VISTA DOCENTE -->
+        <section id="view-docente" class="view-section active">
+            <div class="view-header">
+                <h2>Panel de Evaluación y Generación de Micro-Feedback</h2>
+                <span class="badge badge-must">MUST HAVE ACTIVE</span>
+            </div>
+
+            <div class="grid-layout">
+                <div class="card">
+                    <h3>📥 Entregas Pendientes</h3>
+                    <div id="student-list" class="student-list"></div>
+                    <div class="self-reflection-box">
+                        <h4>💭 Autorreflexión del Alumno:</h4>
+                        <p id="docente-reflection-text" class="italic-text">Selecciona un alumno para ver su
+                            autoevaluación.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Rúbrica Analítica de Calidad Visible</h3>
+                    <div id="rubric-container"></div>
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+                            <h3>⚡ Banco de Respuestas Cortas</h3>
+                            <span class="badge badge-should">SHOULD HAVE</span>
+                        </div>
+                        <div id="feedback-bank" class="bank-buttons-grid"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎥 Generador de Microvideo / Audio</h3>
+                    <div class="video-preview-box">
+                        <div class="camera-placeholder">
+                            <span class="rec-dot">🔴 REC</span>
+                            <div class="avatar-circle">👨‍🏫</div>
+                            <p>Simulador de Microvideo Personalizado</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; display: block;">Mensaje
+                            de Retroalimentación:</label>
+                        <textarea id="feedback-textarea"
+                            placeholder="Selecciona comentarios del banco o escribe aquí..."></textarea>
+                    </div>
+                    <div>
+                        <button id="btn-record-audio" class="btn btn-secondary">🎙️ Adjuntar Nota de Voz</button>
+                        <button id="btn-send-feedback" class="btn btn-primary">🚀 Enviar Feedback Activo</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA ESTUDIANTE -->
+        <section id="view-estudiante" class="view-section">
+            <div class="view-header">
+                <h2>Portal del Estudiante: Mi Feedback y Desempeño</h2>
+                <span class="badge badge-should">COULD HAVE / DASHBOARD</span>
+            </div>
+
+            <div class="student-grid-layout">
+                <div class="card">
+                    <h3>📹 Tu Microvideo de Retroalimentación</h3>
+                    <div class="video-player-box">
+                        <div class="player-screen">
+                            <div class="play-button">▶</div>
+                            <p id="student-video-title">Microvideo de Feedback del Docente</p>
+                        </div>
+                        <div class="player-controls">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span>0:45 / 1:30</span>
+                        </div>
+                    </div>
+                    <div class="feedback-message-card">
+                        <h4 style="font-size:0.85rem; color:var(--accent-cyan); margin-bottom:0.4rem;">💬 Transcripción
+                            del Mensaje:</h4>
+                        <p id="student-feedback-text">Aún no has recibido o seleccionado una retroalimentación.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Dashboard Visual: Progreso en el Tiempo</h3>
+                    <p style="font-size:0.8rem; color:var(--text-muted);">Evolución de tus puntajes en las entregas del
+                        ciclo:</p>
+
+                    <div class="student-dashboard-chart">
+                        <div class="chart-bar-container">
+                            <span class="chart-label">Entrega 1</span>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill" style="width: 60%;"></div>
+                            </div>
+                            <span class="chart-value">12/20 pts</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <span class="chart-label">Entrega 2</span>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill" style="width: 80%;"></div>
+                            </div>
+                            <span class="chart-value">16/20 pts</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <span class="chart-label">MVP Actual</span>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill active-bar" style="width: 95%;"></div>
+                            </div>
+                            <span class="chart-value">19/20 pts</span>
+                        </div>
+                    </div>
+
+                    <h3>📋 Desglose de Rúbrica Actual</h3>
+                    <div id="student-rubric-detail"></div>
+
+                    <div
+                        style="border-top:1px solid var(--border-color); padding-top:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+                        <h3>✍️ Responder Pregunta de Autorreflexión</h3>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">¿Qué ajuste principal harás en tu
+                            siguiente entrega basándote en este feedback?</p>
+                        <textarea id="student-reply-textarea" placeholder="Escribe tu reflexión aquí..."></textarea>
+                        <button id="btn-save-reply" class="btn btn-primary">💾 Guardar Autorreflexión</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // DATOS DE LA APLICACIÓN EMBEBIDOS
+        const appData = {
+            "estudiantes": [
+                {
+                    "id": 1,
+                    "nombre": "Karina López",
+                    "tarea": "Avance de Prototipo MVP",
+                    "autorreflexion": "¿Cómo garantizamos que la solución sea de costo cero sin requerir licencias de pago?",
+                    "feedbackDocente": "Excelente estructuración del prototipo. Te sugiero reforzar el criterio de visualización de la rúbrica.",
+                    "evaluacion": { "criterio1": 2, "criterio2": 1, "criterio3": 2 }
+                },
+                {
+                    "id": 2,
+                    "nombre": "Djanna De La Cruz",
+                    "tarea": "Matriz de consistencia",
+                    "autorreflexion": "Tuve dudas en aislar la necesidad sin caer en la solución disfrazada.",
+                    "feedbackDocente": "",
+                    "evaluacion": { "criterio1": 0, "criterio2": 0, "criterio3": 0 }
+                }
+            ],
+            "rubrica": [
+                {
+                    "id": "criterio1",
+                    "titulo": "1. Diagnóstico de Necesidad (Problem Statement)",
+                    "opciones": [
+                        { "pts": 0, "label": "Insuficiente (0 pts)" },
+                        { "pts": 1, "label": "En Proceso (1 pt)" },
+                        { "pts": 2, "label": "Logrado (2 pts)" }
+                    ]
+                },
+                {
+                    "id": "criterio2",
+                    "titulo": "2. Criterio de Calidad Visible (Rúbrica)",
+                    "opciones": [
+                        { "pts": 0, "label": "Insuficiente (0 pts)" },
+                        { "pts": 1, "label": "En Proceso (1 pt)" },
+                        { "pts": 2, "label": "Logrado (2 pts)" }
+                    ]
+                },
+                {
+                    "id": "criterio3",
+                    "titulo": "3. Demostrabilidad del MVP (5 pasos)",
+                    "opciones": [
+                        { "pts": 0, "label": "Insuficiente (0 pts)" },
+                        { "pts": 1, "label": "En Proceso (1 pt)" },
+                        { "pts": 2, "label": "Logrado (2 pts)" }
+                    ]
+                }
+            ],
+            "bancoRespuestas": [
+                { "categoria": "Excelente", "texto": "✅ ¡Excelente trabajo! Cumples rigurosamente con los 5 pasos del prototipo demostrable." },
+                { "categoria": "Refuerzo", "texto": "⚠️ Buen avance. Recuerda no incluir una solución disfrazada en la Problem Card." },
+                { "categoria": "Autorreflexión", "texto": "💭 Revisa la pregunta de autorreflexión para alinear tu propuesta a la guía metodológica." }
+            ]
+        };
+
+        let currentStudentId = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            setupNavigation();
+            renderStudentList();
+            renderRubric();
+            renderFeedbackBank();
+            loadStudentData(currentStudentId);
+            setupEventListeners();
+        }
+
+        function setupNavigation() {
+            const btnDocente = document.getElementById('btn-docente-view');
+            const btnEstudiante = document.getElementById('btn-estudiante-view');
+            const viewDocente = document.getElementById('view-docente');
+            const viewEstudiante = document.getElementById('view-estudiante');
+
+            btnDocente.addEventListener('click', () => {
+                btnDocente.classList.add('active');
+                btnEstudiante.classList.remove('active');
+                viewDocente.classList.add('active');
+                viewEstudiante.classList.remove('active');
+            });
+
+            btnEstudiante.addEventListener('click', () => {
+                btnEstudiante.classList.add('active');
+                btnDocente.classList.remove('active');
+                viewEstudiante.classList.add('active');
+                viewDocente.classList.remove('active');
+                updateStudentPortalView();
+            });
+        }
+
+        function renderStudentList() {
+            const container = document.getElementById('student-list');
+            container.innerHTML = '';
+
+            appData.estudiantes.forEach(estudiante => {
+                const item = document.createElement('div');
+                item.className = `student-item ${estudiante.id === currentStudentId ? 'active' : ''}`;
+                item.innerHTML = `
+          <div>
+            <div class="student-name">${estudiante.nombre}</div>
+            <div class="student-task">${estudiante.tarea}</div>
+          </div>
+          <span>➡️</span>
+        `;
+
+                item.addEventListener('click', () => {
+                    currentStudentId = estudiante.id;
+                    document.querySelectorAll('.student-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                    loadStudentData(currentStudentId);
+                });
+
+                container.appendChild(item);
+            });
+        }
+
+        function loadStudentData(id) {
+            const estudiante = appData.estudiantes.find(e => e.id === id);
+            if (!estudiante) return;
+
+            document.getElementById('docente-reflection-text').innerText = `"${estudiante.autorreflexion}"`;
+            document.getElementById('feedback-textarea').value = estudiante.feedbackDocente || '';
+
+            Object.keys(estudiante.evaluacion).forEach(criterioId => {
+                const val = estudiante.evaluacion[criterioId];
+                const btns = document.querySelectorAll(`.rubric-btn[data-criterio="${criterioId}"]`);
+                btns.forEach(btn => {
+                    if (parseInt(btn.dataset.pts) === val) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                });
+            });
+        }
+
+        function renderRubric() {
+            const container = document.getElementById('rubric-container');
+            container.innerHTML = '';
+
+            appData.rubrica.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'rubric-criterion';
+                div.innerHTML = `
+          <div class="criterion-title">${item.titulo}</div>
+          <div class="rubric-options">
+            ${item.opciones.map(opt => `
+              <button class="rubric-btn" data-criterio="${item.id}" data-pts="${opt.pts}">
+                ${opt.label}
+              </button>
+            `).join('')}
+          </div>
+        `;
+                container.appendChild(div);
+            });
+
+            document.querySelectorAll('.rubric-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const criterio = e.target.dataset.criterio;
+                    const pts = parseInt(e.target.dataset.pts);
+
+                    document.querySelectorAll(`.rubric-btn[data-criterio="${criterio}"]`).forEach(b => b.classList.remove('selected'));
+                    e.target.classList.add('selected');
+
+                    const estudiante = appData.estudiantes.find(est => est.id === currentStudentId);
+                    if (estudiante) {
+                        estudiante.evaluacion[criterio] = pts;
+                    }
+                });
+            });
+        }
+
+        function renderFeedbackBank() {
+            const container = document.getElementById('feedback-bank');
+            container.innerHTML = '';
+
+            appData.bancoRespuestas.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'bank-btn';
+                btn.innerHTML = `<span>💬</span> <span>${item.texto}</span>`;
+
+                btn.addEventListener('click', () => {
+                    const textarea = document.getElementById('feedback-textarea');
+                    if (textarea.value.trim() !== '') {
+                        textarea.value += '\n' + item.texto;
+                    } else {
+                        textarea.value = item.texto;
+                    }
+                });
+
+                container.appendChild(btn);
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('btn-send-feedback').addEventListener('click', () => {
+                const text = document.getElementById('feedback-textarea').value;
+                const estudiante = appData.estudiantes.find(e => e.id === currentStudentId);
+                if (estudiante) {
+                    estudiante.feedbackDocente = text;
+                    alert(`🚀 Retroalimentación y Microvideo enviados con éxito a ${estudiante.nombre}`);
+                }
+            });
+
+            document.getElementById('btn-record-audio').addEventListener('click', () => {
+                alert('🎙️ Simulador: Nota de voz de 30 segundos adjuntada correctamente al microvideo.');
+            });
+
+            document.getElementById('btn-save-reply').addEventListener('click', () => {
+                const replyText = document.getElementById('student-reply-textarea').value;
+                if (!replyText || replyText.trim() === '') {
+                    alert('Por favor escribe tu autorreflexión antes de guardar.');
+                    return;
+                }
+                alert('💾 Tu respuesta de autorreflexión ha sido enviada al docente.');
+                document.getElementById('student-reply-textarea').value = '';
+            });
+        }
+
+        function updateStudentPortalView() {
+            const estudiante = appData.estudiantes.find(e => e.id === currentStudentId);
+            if (!estudiante) return;
+
+            document.getElementById('student-video-title').innerText = `Feedback para ${estudiante.nombre} - ${estudiante.tarea}`;
+            document.getElementById('student-feedback-text').innerText = estudiante.feedbackDocente || 'El docente aún no ha generado la retroalimentación para esta entrega.';
+
+            const container = document.getElementById('student-rubric-detail');
+            container.innerHTML = '';
+
+            appData.rubrica.forEach(item => {
+                const ptsObtenidos = estudiante.evaluacion[item.id] || 0;
+                const optMatch = item.opciones.find(o => o.pts === ptsObtenidos);
+
+                const div = document.createElement('div');
+                div.style.marginBottom = '0.75rem';
+                div.style.padding = '0.6rem';
+                div.style.backgroundColor = '#0f172a';
+                div.style.borderRadius = '6px';
+                div.style.border = '1px solid #334155';
+
+                div.innerHTML = `
+          <div style="font-size:0.85rem; font-weight:600; color:#06b6d4;">${item.titulo}</div>
+          <div style="font-size:0.8rem; color:#f8fafc; margin-top:0.2rem;">
+            Resultado: <strong>${optMatch ? optMatch.label : 'Sin calificar'}</strong>
+          </div>
+        `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+
+</html>
